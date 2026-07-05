@@ -48,25 +48,27 @@
             document.getElementById('advice').innerText = "Sending data to backend server...";
 
             try {
-                // !!! MUKKIYAMANA IDAM !!!
-                // Kela iruka 'https://UNGA-RENDER-LINK-INGA-PODUNGA.onrender.com/advise' URL-ku badhila...
-                // Unga Render dashboard-la irundha unga original backend URL-ah podunga.
-                // Kadaisila /advise nu mudiyuradhai thookidadhiga!
-                
-                const response = await  fetch  ('https://mdmeeran-818.github.io/weather-agent/',  {
+                // Unga exact Render URL-ah inga fix பண்ணியாச்சு!
+                const response = await fetch('https://weather-agent-og33.onrender.com/advise', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ city: city, health_conditions: health, commute_mode: commute })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Server returned status ${response.status}`);
+                }
+
                 const data = await response.json();
                 
-                document.getElementById('status').innerText = data.status;
-                document.getElementById('advice').innerText = data.advice;
+                document.getElementById('status').innerText = data.status || "SUCCESS";
+                document.getElementById('advice').innerText = data.advice || "No advice returned from server.";
                 
             } catch (err) {
                 document.getElementById('status').innerText = "CONNECTION ERROR";
-                document.getElementById('advice').innerText = "Backend URL thappa iruku, illa server innum ready aagala (Sleep mode)!";
+                document.getElementById('advice').innerText = "Error details: " + err.message + ". (If using Render Free Tier, the first request can take up to 1 minute to wake up the server).";
             }
         }
     </script>
