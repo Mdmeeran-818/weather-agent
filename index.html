@@ -60,5 +60,36 @@
             }
         }
     </script>
+async function getWeatherAdvice() {
+    const city = document.getElementById('city').value;
+    const health = document.getElementById('health').value;
+    const commute = document.getElementById('commute').value;
+
+    document.getElementById('advice').innerText = "Checking weather data... Please wait (Backend might take 1 minute to wake up)...";
+    document.getElementById('status').innerText = "Loading...";
+
+    try {
+        // REPLACE THIS URL WITH YOUR EXACT RENDER URL (Keep /advise at the end)
+        const response = await fetch('https://YOUR-RENDER-APP-NAME.onrender.com/advise', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ city: city, health_conditions: health, commute_mode: commute })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Dynamic check to prevent 'undefined'
+        document.getElementById('status').innerText = data.status || "SUCCESS";
+        document.getElementById('advice').innerText = data.advice || "No advice returned.";
+        
+    } catch (err) {
+        document.getElementById('status').innerText = "ERROR";
+        document.getElementById('advice').innerText = "Could not connect to backend. " + err.message;
+    }
+}
 </body>
 </html>
